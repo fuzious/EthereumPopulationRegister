@@ -132,4 +132,19 @@ public class Supplier {
 			return "error occured "+e.getMessage();
 		}
 	}
+
+	@GetMapping("/officer/complaintStatus/{privateKey}/{walletAddress}/{index}")
+	public String approveComplaint(@PathVariable String privateKey, @PathVariable String walletAddress,
+			@PathVariable String index) {
+		String officerAddress = fetchContract(walletAddress);
+		Credentials credentials=Credentials.create(privateKey);
+		Officer officer = Officer.load(officerAddress,deployed,credentials,ManagedTransaction.GAS_PRICE,Contract.GAS_LIMIT);
+		try {
+			boolean status = officer.complaintStatus(new BigInteger(""+index)).sendAsync().get();
+			return (""+status);
+		}
+		catch (Exception e) {
+			return "error occured "+e.getMessage();
+		}
+	}
 }
